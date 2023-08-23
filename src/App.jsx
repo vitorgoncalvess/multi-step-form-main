@@ -10,7 +10,7 @@ function App() {
           <div className="h-full w-[35%] relative">
             <img className="h-full" src={bg} alt="" />
             <div className="absolute left-6 top-8">
-              <FormUI.Etapas type="col" className="text-color-500" />
+              <FormUI.Etapas type="col" />
             </div>
           </div>
           <div className="h-full w-[80%] py-8 px-16">

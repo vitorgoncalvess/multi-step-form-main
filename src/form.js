@@ -27,32 +27,130 @@ const body = [
     SUBTITLE: "You have the option of monthly or yearly billing.",
     QUESTIONS: [
       {
+        id: "card",
         type: "card",
         options: [
           {
             id: "arcade",
             img: iconArcade,
             title: "Arcade",
-            subtitle: "$9/mo"
+            subtitle: (awnser) => {
+              return awnser.switch === "Yearly" ? "$90/yr" : "$9/mo";
+            },
+            extra: (awnser) => {
+              return awnser.switch === "Yearly" && "2 months free";
+            }
           },
           {
             id: "advanced",
             img: iconAdvanced,
             title: "Advanced",
-            subtitle: "$12/mo"
+            subtitle: (awnser) => {
+              return awnser.switch === "Yearly" ? "$120/yr" : "$12/mo";
+            },
+            extra: (awnser) => {
+              return awnser.switch === "Yearly" && "2 months free";
+            }
           },
           {
             id: "pro",
             img: iconPro,
             title: "Pro",
-            subtitle: "$15/mo"
+            subtitle: (awnser) => {
+              return awnser.switch === "Yearly" ? "$150/yr" : "$15/mo";
+            },
+            extra: (awnser) => {
+              return awnser.switch === "Yearly" && "2 months free";
+            }
           }
         ]
       },
       {
+        id: "switch",
         type: "switch",
         from: "Monthly",
         to: "Yearly"
+      }
+    ]
+  },
+  {
+    TITLE: "Pick add-ons",
+    SUBTITLE: "Add-ons help enhance your gaming experience",
+    NAME: "ADD-ONS",
+    QUESTIONS: [
+      {
+        id: "add-ons",
+        type: "checkbox",
+        options: [
+          {
+            id: 1,
+            title: "Online service",
+            subtitle: "Access to multiplayer games",
+            value: (awnser) => {
+              return awnser.switch === "Monthly" ? "$1/mo" : "$10/yr";
+            }
+          },
+          {
+            id: 2,
+            title: "Larger storage",
+            subtitle: "Extra 1TB of cloud save",
+            value: (awnser) => {
+              return awnser.switch === "Monthly" ? "$2/mo" : "$20/yr";
+            }
+          },
+          {
+            id: 3,
+            title: "Customizable profile",
+            subtitle: "Custom theme on your profile",
+            value: (awnser) => {
+              return awnser.switch === "Monthly" ? "$2/mo" : "$20/yr";
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    TITLE: "Summary",
+    SUBTITLE: "Double-check everything looks OK before confirming",
+    NAME: "SUMMARY",
+    QUESTIONS: [
+      {
+        type: "summary",
+        resume: {
+          header: {
+            title: (awnser) => awnser.card.title,
+            subtitle: (awnser) =>
+              typeof awnser.card.subtitle === "function"
+                ? awnser.card.subtitle(awnser)
+                : awnser.card.subtitle
+          },
+          content: (awnser) => {
+            return awnser.checkbox;
+          },
+          total: (awnser) => {
+            const price = Number(
+              awnser.card
+                .subtitle(awnser)
+                .replace("$", "")
+                .replace("/mo", "")
+                .replace("/yr", "")
+            );
+            const total = awnser.checkbox.reduce((total, item) => {
+              return (
+                total +
+                Number(
+                  item
+                    .value(awnser)
+                    .replace("$", "")
+                    .replace("/mo", "")
+                    .replace("/yr", "")
+                )
+              );
+            }, price);
+            return `$${total}/${awnser.checkbox[0].value(awnser).substring(4)}`;
+          }
+        }
       }
     ]
   }
